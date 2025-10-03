@@ -6,8 +6,8 @@ using UnityEngine;
 public class MeshGenerator : MonoBehaviour
 {
     public Mesh mesh;
-    public int longitudeSegments = 12;
-    public int latitudeSegments = 8;
+    public int longitudeSegments = 20;
+    public int latitudeSegments = 20;
     public float radius = 1f;
 
     private Vector3[] originalVertices;
@@ -70,12 +70,12 @@ public class MeshGenerator : MonoBehaviour
                 int next = current + longitudeSegments + 1;
 
                 triangles[triIndex++] = current;
-                triangles[triIndex++] = next;
                 triangles[triIndex++] = current + 1;
+                triangles[triIndex++] = next;
 
                 triangles[triIndex++] = current + 1;
-                triangles[triIndex++] = next;
                 triangles[triIndex++] = next + 1;
+                triangles[triIndex++] = next;
             }
         }
 
@@ -84,9 +84,14 @@ public class MeshGenerator : MonoBehaviour
         mesh.normals = normals;
         mesh.uv = uv;
 
+        ApplyCraters(vertices, radius, craterCount: 3);
+
+        mesh.vertices = vertices;
+        mesh.RecalculateNormals();
+        
         GetComponent<MeshFilter>().mesh = mesh;
 
-        canAlter = true;
+        //canAlter = true;
     }
 
     // Update is called once per frame
@@ -99,33 +104,30 @@ public class MeshGenerator : MonoBehaviour
 
             originalVertices.CopyTo(deformedVertices, 0);
 
-            Crumple();
-        }
-
-
-        void Crumple()
-        {
-            Vector3 localCrumpleCenter = transform.InverseTransformPoint(transform.position + crumpleCenter);
-
-            for (int i = 0; i < deformedVertices.Length; i++)
-            {
-                float distance = Vector3.Distance(deformedVertices[i], localCrumpleCenter);
-
-                if (distance < crumpleRadius)
-                {
-                    // How much to crumple based on distance (closer = more)
-                    float effect = 1f - (distance / crumpleRadius);
-
-                    // Move vertex toward center
-                    Vector3 direction = (localCrumpleCenter - deformedVertices[i]).normalized;
-                    deformedVertices[i] += direction * crumpleAmount * effect;
-                }
-            }
-
-            mesh.vertices = deformedVertices;
-            mesh.RecalculateNormals();
-
-            GetComponent<MeshFilter>().mesh = mesh;
         }
     }
+
+    void ApplyCraters(Vector3[] vertices, float radius, int craterCount)
+    {
+        float craterRadius = radius * 0.5f;
+        float craterDepth = radius * 1.0f;
+
+        for (int i = 0; i < craterCount; i++)
+        {
+            Vector3 craterCenter = Random.onUnitSphere * radius;
+
+            for (int v = 0; v < vertices.Length; v++)
+            {
+                float dist = Vector3.Distance(vertices[v], craterCenter);
+
+                if (dist < craterRadius)
+                {
+                    float falloff = 1f - (dist / craterRadius);
+                    float depth = falloff * craterDepth;
+                    vertices[v] -= vertices[v].normalized * depth;
+                }
+            }
+        }
+}
+        
 }

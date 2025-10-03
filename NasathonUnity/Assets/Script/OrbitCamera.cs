@@ -5,8 +5,8 @@ public class OrbitCamera : MonoBehaviour
     public Transform target;       // The object to orbit around
     public float distance = 5.0f;  // Distance from the target
     public float sensitivity = 5.0f;
-    public float yMinLimit = -20f;
-    public float yMaxLimit = 80f;
+    public float yMinLimit = -180f;
+    public float yMaxLimit = 180f;
 
     private float x = 0.0f;
     private float y = 0.0f;
@@ -33,7 +33,7 @@ public class OrbitCamera : MonoBehaviour
             x += Input.GetAxis("Mouse X") * sensitivity;
             y -= Input.GetAxis("Mouse Y") * sensitivity;
 
-            y = Mathf.Clamp(y, yMinLimit, yMaxLimit);
+            //y = Mathf.Clamp(y, yMinLimit, yMaxLimit);
         }
 
         Quaternion rotation = Quaternion.Euler(y, x, 0);
