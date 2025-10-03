@@ -7,6 +7,9 @@ using System;
 
 public class AsteroidCreationUI : MonoBehaviour
 {
+
+    public static AsteroidCreationUI instance { get; private set; }
+
     [Header("UI Input Fields (TextMeshPro)")]
     [SerializeField] private TMP_InputField velocityInput;
     [SerializeField] private TMP_InputField massInput;
@@ -23,6 +26,11 @@ public class AsteroidCreationUI : MonoBehaviour
         public float velocity;
         public float mass;
         public float diameter;
+    }
+
+    private void Awake()
+    {
+        instance = this;
     }
 
     private void Start()
