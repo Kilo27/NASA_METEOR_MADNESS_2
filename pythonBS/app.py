@@ -37,7 +37,7 @@ def get_trajectory():
     elements = getData.orbitalData(asteroid_id)
     end_date=request.args.get("end_date")
     print(getTrajectory.calculate_asteroid_trajectory(elements, end_date))
-    return str(getTrajectory.calculate_asteroid_trajectory(elements, end_date))#http://localhost:5000/calculateAsteroidTrajectory?asteroid_id=2497232&end_date=2026-10-01
+    return jsonify(getTrajectory.calculate_asteroid_trajectory(elements, end_date))#http://localhost:5000/calculateAsteroidTrajectory?asteroid_id=2497232&end_date=2026-10-01
 
 if __name__ == '__main__':
     app.run()
