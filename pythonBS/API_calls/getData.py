@@ -2,9 +2,6 @@ from datetime import datetime, timedelta
 import requests
 import API_calls.config as config
 
-start_date = "2025-03-01"
-weeks = 3
-
 def getAsteroids(start_date, week):
     start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
 

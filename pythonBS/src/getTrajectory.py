@@ -65,5 +65,3 @@ def calculate_asteroid_trajectory(elements, end_date, start_date=current_date, s
     trajectory = [asteroid_position(elements, str(date)) for date in dates]
     return np.array(trajectory)
 #TODO: Replace with actual elements from getAsteroidData()
-elements = orbitalData(2000719)
-print(calculate_asteroid_trajectory(elements, "2026-01-01"))
