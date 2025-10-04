@@ -84,7 +84,7 @@ public class Asteroid : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
-    void ApplyCraters(Vector3[] vertices, float radius, int craterCount)
+    void ApplyCraters(Vector3[]     vertices, float radius, int craterCount)
     {
         float craterRadius = radius * 0.5f;
         float craterDepth = radius * 1.0f;
@@ -105,5 +105,10 @@ public class Asteroid : MonoBehaviour
                 }
             }
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Destroy(this);
     }
 }

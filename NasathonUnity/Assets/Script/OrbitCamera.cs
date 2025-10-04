@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class OrbitCamera : MonoBehaviour
 {
-    public Transform target;       // The object to orbit around
-    public float distance = 5.0f;  // Distance from the target
+    public Transform target;        // The object to orbit around
+    public float distance = 5.0f;   // Distance from the target
+    public float zoomSpeed = 2.0f;  // Zoom sensitivity
+    public float minDistance = 1.0f;
+    public float maxDistance = 2000.0f;
+
     public float sensitivity = 5.0f;
     public float yMinLimit = -180f;
     public float yMaxLimit = 180f;
@@ -28,14 +32,25 @@ public class OrbitCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        // Handle rotation
         if (Input.GetMouseButton(1)) // Right mouse button
         {
             x += Input.GetAxis("Mouse X") * sensitivity;
             y -= Input.GetAxis("Mouse Y") * sensitivity;
 
-            //y = Mathf.Clamp(y, yMinLimit, yMaxLimit);
+            // Optionally clamp Y rotation
+            // y = Mathf.Clamp(y, yMinLimit, yMaxLimit);
         }
 
+        // Handle zoom
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0.0f)
+        {
+            distance -= scroll * zoomSpeed;
+            distance = Mathf.Clamp(distance, minDistance, maxDistance);
+        }
+
+        // Calculate new position and rotation
         Quaternion rotation = Quaternion.Euler(y, x, 0);
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
         Vector3 position = rotation * negDistance + target.position;

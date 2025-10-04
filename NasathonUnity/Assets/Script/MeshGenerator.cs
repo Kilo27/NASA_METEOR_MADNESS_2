@@ -8,7 +8,7 @@ public class MeshGenerator : MonoBehaviour
     public Mesh mesh;
     public int longitudeSegments = 20;
     public int latitudeSegments = 20;
-    public float radius = 1f;
+    public float radius;
 
     private Vector3[] originalVertices;
     private Vector3[] deformedVertices;
@@ -86,7 +86,11 @@ public class MeshGenerator : MonoBehaviour
         //mesh.vertices = vertices;
         //mesh.RecalculateNormals();
 
-        GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshFilter>().sharedMesh = null;
+        GetComponent<MeshFilter>().sharedMesh = mesh;
+
+        GetComponent<MeshCollider>().sharedMesh = null;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
 
         //CrumpleAtWorldPoint(new Vector3(1, 0, 0), 0.5f, 0.5f);
 
@@ -120,7 +124,7 @@ public class MeshGenerator : MonoBehaviour
     public void CrumpleAtWorldPoint(Vector3 worldImpactPoint, float radius, float depth)
     {
         MeshFilter mf = GetComponent<MeshFilter>();
-        Mesh mesh = mf.mesh;
+        Mesh mesh = mf.sharedMesh;
         Vector3[] vertices = mesh.vertices;
 
         // Convert world point into *local space of the mesh*
@@ -165,7 +169,7 @@ public class MeshGenerator : MonoBehaviour
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 2f);
 
                 lastHitPoint = hit.point;  // For OnDrawGizmos
-                CrumpleAtWorldPoint(hit.point, 0.5f, 0.5f);
+                CrumpleAtWorldPoint(hit.point, 5.0f, 5.0f);
             }
             else
             {
@@ -182,5 +186,10 @@ public class MeshGenerator : MonoBehaviour
         Gizmos.DrawSphere(lastHitPoint, 0.05f);
     }
 
-    
+    void OnCollisionEnter(Collision collision)
+    {
+        CrumpleAtWorldPoint(collision.transform.position, 0.5f, 0.5f);
+    }
+
+
 }
