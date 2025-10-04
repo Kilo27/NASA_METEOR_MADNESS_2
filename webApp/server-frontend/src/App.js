@@ -46,8 +46,8 @@ function App() {
       document.querySelector("#unity-container").className = "unity-mobile";
       canvas.className = "unity-mobile";
     } else {
-      canvas.style.width = "960px";
-      canvas.style.height = "600px";
+      canvas.style.width = "1920";
+      canvas.style.height = "1200";
     }
 
     document.querySelector("#unity-loading-bar").style.display = "block";
@@ -82,7 +82,7 @@ function App() {
   return (
     <div className="App">
       <div id="unity-container" className="unity-desktop">
-        <canvas ref={canvasRef} id="unity-canvas" width="960" height="600" tabIndex="-1"></canvas>
+        <canvas ref={canvasRef} id="unity-canvas" width="1920" height="1200" tabIndex="-1"></canvas>
         <div id="unity-loading-bar">
           <div id="unity-logo"></div>
           <div id="unity-progress-bar-empty">
