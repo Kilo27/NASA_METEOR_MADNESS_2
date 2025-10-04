@@ -30,6 +30,14 @@ def orbitalData(asteroid_id):
     orbital_data = response["orbital_data"]
     return {"a": orbital_data["semi_major_axis"],"e" : orbital_data["eccentricity"], "i":orbital_data["inclination"], "Omega": orbital_data["ascending_node_longitude"], "omega": orbital_data["perihelion_argument"], "M0": orbital_data["mean_anomaly"], "epoch": orbital_data["epoch_osculation"], "period": orbital_data["orbital_period"]}
 
+def get_asteroid_info(asteroid_id):
+    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/neo/{asteroid_id}?api_key={config.API_KEY}").json()
+    asteroid_data = response["close_approach_data"]
+    diameter_data = response["estimated_diameter"]
+    print(asteroid_data[0]["relative_velocity"]["kilometers_per_second"])
+
+    return {"velocity": (float(asteroid_data[0]["relative_velocity"]["kilometers_per_second"])*1000),"mean_diameter": ((diameter_data["meters"]["estimated_diameter_max"]+diameter_data["meters"]["estimated_diameter_min"])/2) }
+
 if __name__ == '__main__':
     asteroids = getAsteroids(start_date, weeks)
     for a in asteroids:
