@@ -1,27 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
-{
+{  
     public Mesh mesh;
     public int longitudeSegments = 20;
     public int latitudeSegments = 20;
     public float radius;
 
-    private Vector3[] originalVertices;
-    private Vector3[] deformedVertices;
-    public float crumpleAmount = 0.5f; // How far vertices get pulled in
-    public float crumpleRadius = 0.5f; // How big the area of crumpling is
-    public Vector3 crumpleCenter = Vector3.up; // Center of the crumple (world or local depending)
-
-    void Start()
-    {
-        GenerateSphere();
-    }
-
-    void GenerateSphere()
+    public void GenerateSphere()
     {
         mesh = new Mesh();
         mesh.name = "Procedural Sphere";
@@ -82,113 +72,12 @@ public class MeshGenerator : MonoBehaviour
         mesh.normals = normals;
         mesh.uv = uv;
 
-        //ApplyCraters(vertices, radius, craterCount: 3);
-        //mesh.vertices = vertices;
-        //mesh.RecalculateNormals();
-
         GetComponent<MeshFilter>().sharedMesh = null;
         GetComponent<MeshFilter>().sharedMesh = mesh;
 
         GetComponent<MeshCollider>().sharedMesh = null;
         GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        //CrumpleAtWorldPoint(new Vector3(1, 0, 0), 0.5f, 0.5f);
-
-        //canAlter = true;
-    }
-
-    // void ApplyCraters(Vector3[] vertices, float radius, int craterCount)
-    // {
-    //     float craterRadius = radius * 0.5f;
-    //     float craterDepth = radius * 1.0f;
-
-    //     for (int i = 0; i < craterCount; i++)
-    //     {
-    //         Vector3 craterCenter = Random.onUnitSphere * radius;
-
-    //         for (int v = 0; v < vertices.Length; v++)
-    //         {
-    //             float dist = Vector3.Distance(vertices[v], craterCenter);
-
-    //             if (dist < craterRadius)
-    //             {
-    //                 float falloff = 1f - (dist / craterRadius);
-    //                 float depth = falloff * craterDepth;
-    //                 vertices[v] -= vertices[v].normalized * depth;
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    public void CrumpleAtWorldPoint(Vector3 worldImpactPoint, float radius, float depth)
-    {
-        MeshFilter mf = GetComponent<MeshFilter>();
-        Mesh mesh = mf.sharedMesh;
-        Vector3[] vertices = mesh.vertices;
-
-        // Convert world point into *local space of the mesh*
-        Vector3 localImpactPoint = transform.InverseTransformPoint(worldImpactPoint);
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            // vertices[i] is already in local space
-            float dist = Vector3.Distance(vertices[i], localImpactPoint);
-
-            if (dist < radius)
-            {
-                float falloff = 1f - (dist / radius);
-                float push = falloff * depth;
-
-                // Push vertex inward toward center of sphere (or toward impact point if desired)
-                vertices[i] -= vertices[i].normalized * push;
-            }
-        }
-
-        mesh.vertices = vertices;
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        // ALSO update the collider if using MeshCollider
-        var collider = GetComponent<MeshCollider>();
-        if (collider != null)
-        {
-            collider.sharedMesh = null;
-            collider.sharedMesh = mesh;
-        }
-    }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Debug.Log("Raycast Hit Point (world): " + hit.point);
-                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 2f);
-
-                lastHitPoint = hit.point;  // For OnDrawGizmos
-                CrumpleAtWorldPoint(hit.point, 5.0f, 5.0f);
-            }
-            else
-            {
-                Debug.LogWarning("Raycast did not hit anything.");
-            }
-        }
-    }
-
-    Vector3 lastHitPoint;
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(lastHitPoint, 0.05f);
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        CrumpleAtWorldPoint(collision.transform.position, 0.5f, 0.5f);
     }
 
 
