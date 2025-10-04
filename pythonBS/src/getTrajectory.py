@@ -62,8 +62,8 @@ current_date = datetime.now().strftime("%Y-%m-%d")
 
 def calculate_asteroid_trajectory(elements, end_date, start_date=current_date, step_days=1):
     dates = np.arange(np.datetime64(start_date), np.datetime64(end_date), np.timedelta64(step_days, 'D'))
-    trajectory = [asteroid_position(elements, str(date)) for date in dates]
-    return np.array(trajectory)
+    trajectory = [list(asteroid_position(elements, str(date))) for date in dates]
+    return trajectory
 #TODO: Replace with actual elements from getAsteroidData()
 elements = orbitalData(2000719)
 print(calculate_asteroid_trajectory(elements, "2026-01-01"))
