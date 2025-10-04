@@ -1,6 +1,7 @@
 import requests
 import sys
-from API_calls import *
+from API_calls.getData import orbitalData, getAsteroids
+
 import json
 from astropy import units as u
 from astropy.time import Time
@@ -61,14 +62,5 @@ def calculate_asteroid_trajectory(elements, start_date, end_date, step_days=1):
     trajectory = [asteroid_position(elements, str(date)) for date in dates]
     return np.array(trajectory)
 #TODO: Replace with actual elements from getAsteroidData()
-elements = {
-    'a': 1.2521,         # AU
-    'e': 0.3513,
-    'i': 3.951,          # deg
-    'Omega': 128.165,    # deg
-    'omega': 310.003,    # deg
-    'M0': 60.388,        # deg
-    'epoch': 2461000.5,  # Julian Date
-    'period': 511.75     # days
-}
+elements = orbitalData(2000719)
 print(calculate_asteroid_trajectory("2024-01-01", "2024-01-10"))
