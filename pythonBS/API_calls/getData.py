@@ -29,7 +29,7 @@ def getAsteroids(start_date, week):
     return asteroid_list
 
 def orbitalData(asteroid_id):
-    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/neo/{asteroid_id}?api_key=DEMO_KEY").json()
+    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/neo/{asteroid_id}?api_key={config.API_KEY}").json()
     orbital_data = response["orbital_data"]
     return {"a": orbital_data["semi_major_axis"],"e" : orbital_data["eccentricity"], "i":orbital_data["inclination"], "Omega": orbital_data["ascending_node_longitude"], "omega": orbital_data["perihelion_argument"], "M0": orbital_data["mean_anomaly"], "epoch": orbital_data["epoch_osculation"], "period": orbital_data["orbital_period"]}
 
