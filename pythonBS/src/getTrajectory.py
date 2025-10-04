@@ -9,6 +9,8 @@ from poliastro.bodies import Sun, Earth
 from poliastro.twobody import Orbit
 import numpy as np
 from math import radians, degrees, cos, sin, atan2, sqrt, tan
+from datetime import datetime
+
 #Asteroid asteroids[] =getData.getAsteroids(mm-dd-yyyy, mm-dd-yyyy)
 
 #Class Asteroid:
@@ -56,11 +58,12 @@ def asteroid_position(elements, target_date):
     z = r * (sin(omega + nu) * sin(i))
     return x*AU_TO_M, y*AU_TO_M, z*AU_TO_M
 
+current_date = datetime.now().strftime("%Y-%m-%d")
 
-def calculate_asteroid_trajectory(elements, start_date, end_date, step_days=1):
+def calculate_asteroid_trajectory(elements, end_date, start_date=current_date, step_days=1):
     dates = np.arange(np.datetime64(start_date), np.datetime64(end_date), np.timedelta64(step_days, 'D'))
     trajectory = [asteroid_position(elements, str(date)) for date in dates]
     return np.array(trajectory)
 #TODO: Replace with actual elements from getAsteroidData()
 elements = orbitalData(2000719)
-print(calculate_asteroid_trajectory(elements, "2024-01-01", "2024-01-10"))
+print(calculate_asteroid_trajectory(elements, "2026-01-01"))
