@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Asteroid : MonoBehaviour
@@ -8,9 +9,16 @@ public class Asteroid : MonoBehaviour
     public int longitudeSegments = 20;
     public int latitudeSegments = 20;
 
-    private float radius;
-    private float mass;
-    private float velocity;
+    public float radius;
+    public float mass;
+    public float velocity;
+
+    private GameObject earth;
+
+    private void Start()
+    {
+        earth = GameObject.Find("Earth");
+    }
 
     public void InitializeMesh(AsteroidCreationUI.AsteroidCreationData data)
     {
@@ -84,7 +92,7 @@ public class Asteroid : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
-    void ApplyCraters(Vector3[]     vertices, float radius, int craterCount)
+    void ApplyCraters(Vector3[] vertices, float radius, int craterCount)
     {
         float craterRadius = radius * 0.5f;
         float craterDepth = radius * 1.0f;
@@ -107,8 +115,34 @@ public class Asteroid : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void Update()
     {
-        Destroy(this);
+        Move();
+    }
+
+    private void Move()
+    {
+        // Find Earth by tag (make sure your Earth GameObject has the "Earth" tag)
+
+
+        if (earth != null)
+        {
+            // Calculate direction to Earth
+            Vector3 directionToEarth = (earth.transform.position - transform.position).normalized;
+
+            // Move towards Earth
+            transform.position += directionToEarth * velocity * Time.deltaTime;
+        }
+        else
+        {
+            Debug.LogWarning("Earth not found! Make sure there's a GameObject with tag 'Earth'");
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        MeshGenerator generator = other.GetComponent<MeshGenerator>();
+        generator.CrumpleAtWorldPoint(transform.position, generator.crumpleRadius, generator.crumpleAmount);
+        Destroy(this.gameObject);
     }
 }

@@ -1520,7 +1520,7 @@ Transform:
   m_GameObject: {fileID: 731498105}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3739, y: 0.297, z: 1.001}
+  m_LocalPosition: {x: 5.13, y: 3.65, z: 6.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1736,8 +1736,9 @@ GameObject:
   - component: {fileID: 805724809}
   - component: {fileID: 805724810}
   - component: {fileID: 805724811}
+  - component: {fileID: 805724812}
   m_Layer: 0
-  m_Name: MeshTest
+  m_Name: Earth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1758,9 +1759,9 @@ MonoBehaviour:
   mesh: {fileID: 0}
   longitudeSegments: 12
   latitudeSegments: 8
-  radius: 10
-  crumpleAmount: 0.5
-  crumpleRadius: 0.5
+  radius: 1
+  crumpleAmount: 2
+  crumpleRadius: 2
   crumpleCenter: {x: 0, y: 1, z: 0}
 --- !u!4 &805724808
 Transform:
@@ -1848,13 +1849,40 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!54 &805724812
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805724806}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

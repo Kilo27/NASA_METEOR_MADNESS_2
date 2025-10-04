@@ -169,7 +169,7 @@ public class MeshGenerator : MonoBehaviour
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 2f);
 
                 lastHitPoint = hit.point;  // For OnDrawGizmos
-                CrumpleAtWorldPoint(hit.point, 5.0f, 5.0f);
+                CrumpleAtWorldPoint(hit.point, crumpleRadius, crumpleAmount); 
             }
             else
             {
@@ -184,11 +184,6 @@ public class MeshGenerator : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(lastHitPoint, 0.05f);
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        CrumpleAtWorldPoint(collision.transform.position, 0.5f, 0.5f);
     }
 
 

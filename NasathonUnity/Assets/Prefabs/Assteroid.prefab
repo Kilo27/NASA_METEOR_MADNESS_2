@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4462587434547023234}
   - component: {fileID: 6116240331125782617}
   - component: {fileID: 5068662325027321042}
+  - component: {fileID: 6785988181292770519}
   m_Layer: 0
   m_Name: Assteroid
   m_TagString: Untagged
@@ -105,3 +106,27 @@ MonoBehaviour:
   mesh: {fileID: 0}
   longitudeSegments: 20
   latitudeSegments: 20
+  radius: 0
+  mass: 0
+  velocity: 0
+--- !u!135 &6785988181292770519
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3004025934982386174}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
