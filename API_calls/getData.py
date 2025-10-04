@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import requests
-import config
+from config import *
 
 start_date = "2025-03-01"
 weeks = 3
@@ -15,7 +15,7 @@ def getAsteroids(start_date, week):
         end_str = (start_date_dt + timedelta(days=7)).strftime("%Y-%m-%d")
 
         response = requests.get(
-            f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_str}&end_date={end_str}&api_key={config.API_KEY}"
+            f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_str}&end_date={end_str}&api_key={API_KEY}"
         ).json()
 
         for date, asteroids in response["near_earth_objects"].items():
