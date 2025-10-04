@@ -26,11 +26,6 @@ def get_asteroids(methods="POST"):
     start_date=request.args.get('start_date')
     weeks= int(request.args.get('weeks'))
     return jsonify(getData.getAsteroids(start_date, weeks))
-    
-@app.route("/getOrbitalDataById")#http://localhost:5000/getOrbitalDataById?asteroid_id=2497232
-def get_orbital_data(methods="POST"):
-    asteroid_id=int(request.args.get("asteroid_id"))
-    return getData.orbitalData(asteroid_id)
 
 @app.route("/calculateAsteroidTrajectory")
 def get_trajectory():
