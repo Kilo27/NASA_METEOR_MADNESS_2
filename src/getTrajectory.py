@@ -1,7 +1,7 @@
 import requests
 import sys
 from API_calls.getData import orbitalData, getAsteroids
-
+from API_calls import config
 import json
 from astropy import units as u
 from astropy.time import Time
@@ -24,17 +24,17 @@ def solve_kepler(M, e, tolerance=1e-6):
     return E
 def asteroid_position(elements, target_date):
     # Orbital elements (example for asteroid 2009 JR5)
-    a = elements['a']                     # semi-major axis in AU
-    e = elements['e']                     # eccentricity
-    i = radians(elements['i'])            # inclination in radians
-    Omega = radians(elements['Omega'])    # longitude of ascending node
-    omega = radians(elements['omega'])    # argument of perihelion
-    M0 = radians(elements['M0'])          # mean anomaly at epoch in radians
-    epoch = elements['epoch']             # epoch in Julian date
+    a = float(elements['a'])                     # semi-major axis in AU
+    e = float(elements['e'])                     # eccentricity
+    i = radians(float(elements['i']))            # inclination in radians
+    Omega = radians(float(elements['Omega']))    # longitude of ascending node
+    omega = radians(float(elements['omega']))    # argument of perihelion
+    M0 = radians(float(elements['M0']))          # mean anomaly at epoch in radians
+    epoch = float(elements['epoch'])             # epoch in Julian date
 
     # Time conversion
     t = Time(target_date, format='iso', scale='utc').jd
-    n = 360 / elements['period']          # mean motion in deg/day
+    n = 360 / float(elements['period'])          # mean motion in deg/day
     M = radians((degrees(M0) + n * (t - epoch)) % 360)  # updated mean anomaly
 
     # Solve for eccentric anomaly E
@@ -63,4 +63,4 @@ def calculate_asteroid_trajectory(elements, start_date, end_date, step_days=1):
     return np.array(trajectory)
 #TODO: Replace with actual elements from getAsteroidData()
 elements = orbitalData(2000719)
-print(calculate_asteroid_trajectory("2024-01-01", "2024-01-10"))
+print(calculate_asteroid_trajectory(elements, "2024-01-01", "2024-01-10"))
