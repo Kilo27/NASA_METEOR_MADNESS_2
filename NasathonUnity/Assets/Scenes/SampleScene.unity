@@ -668,9 +668,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ocean
   mesh: {fileID: 0}
-  longitudeSegments: 12
-  latitudeSegments: 12
   radius: 0.99
+  subdivisions: 4
   waveAmplitude: 0.1
   waveWidth: 25
   waveSpeed: 60
@@ -1832,9 +1831,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mantle
   mesh: {fileID: 0}
-  longitudeSegments: 20
-  latitudeSegments: 20
-  radius: 0.93
+  radius: 0.98
+  subdivisions: 4
   crumpleAmount: 0.1
   crumpleRadius: 0.2
   crumpleCenter: {x: 0, y: 1, z: 0}
@@ -2234,9 +2232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Earth
   mesh: {fileID: 0}
-  longitudeSegments: 12
-  latitudeSegments: 12
   radius: 1
+  subdivisions: 4
   ocean: {fileID: 265756341}
   mantle: {fileID: 686873591}
   crumpleAmount: 0.25
