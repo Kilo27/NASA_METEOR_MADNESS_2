@@ -29,7 +29,7 @@ public class Ocean : MeshGenerator
 
     void Awake()
     {
-        GenerateSphere();
+        GenerateIcosphere();
         // Initialize originalVertices here to prevent null reference on first impact
         originalVertices = mesh.vertices; 
     }
