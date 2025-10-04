@@ -1833,7 +1833,7 @@ MonoBehaviour:
   mesh: {fileID: 0}
   radius: 0.98
   subdivisions: 4
-  crumpleAmount: 0.1
+  crumpleAmount: 0.4
   crumpleRadius: 0.2
   crumpleCenter: {x: 0, y: 1, z: 0}
 --- !u!1 &731498105
