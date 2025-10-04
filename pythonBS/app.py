@@ -35,5 +35,9 @@ def get_trajectory():
     print(getTrajectory.calculate_asteroid_trajectory(elements, end_date))
     return jsonify(getTrajectory.calculate_asteroid_trajectory(elements, end_date))#http://localhost:5000/calculateAsteroidTrajectory?asteroid_id=2497232&end_date=2026-10-01
 
+@app.route("/getAsteroidInfo")#http://localhost:5000/getAsteroidInfo?asteroid_id=2497232
+def asteroid_info(methods="POST"):
+    asteroid_id=int(request.args.get("asteroid_id"))
+    return jsonify(getData.getAsteroidInfo(asteroid_id))
 if __name__ == '__main__':
     app.run()

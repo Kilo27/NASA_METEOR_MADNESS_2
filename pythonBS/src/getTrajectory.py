@@ -66,4 +66,4 @@ def calculate_asteroid_trajectory(elements, end_date, start_date=current_date, s
     return trajectory
 #TODO: Replace with actual elements from getAsteroidData()
 elements = orbitalData(2000719)
-print(calculate_asteroid_trajectory(elements, "2026-01-01"))
+
