@@ -1,190 +1,115 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
-{
+{  
+    // You can keep your old public variables, but the new method will use these:
     public Mesh mesh;
-    public int longitudeSegments = 20;
-    public int latitudeSegments = 20;
-    public float radius;
+    public float radius = 1f;
+    [Range(0, 6)]
+    public int subdivisions = 4; // 3-4 is a good starting point
 
-    private Vector3[] originalVertices;
-    private Vector3[] deformedVertices;
-    public float crumpleAmount = 0.5f; // How far vertices get pulled in
-    public float crumpleRadius = 0.5f; // How big the area of crumpling is
-    public Vector3 crumpleCenter = Vector3.up; // Center of the crumple (world or local depending)
+public class MeshGenerator : MonoBehaviour
+{
+    // You can keep your old public variables, but the new method will use these:
+    public Mesh mesh;
+    public float radius = 1f;
+    [Range(0, 6)]
+    public int subdivisions = 4; // 3-4 is a good starting point
 
-    void Start()
-    {
-        GenerateSphere();
-    }
-
-    void GenerateSphere()
+    // --- REPLACE YOUR OLD GenerateSphere() METHOD WITH THIS ---
+    public void GenerateIcosphere()
     {
         mesh = new Mesh();
-        mesh.name = "Procedural Sphere";
+        mesh.name = "Procedural Icosphere";
 
-        int vertCount = (longitudeSegments + 1) * (latitudeSegments + 1);
-        Vector3[] vertices = new Vector3[vertCount];
-        Vector3[] normals = new Vector3[vertCount];
-        Vector2[] uv = new Vector2[vertCount];
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
 
-        int index = 0;
+        // Create the 12 vertices of an Icosahedron
+        float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
-        for (int lat = 0; lat <= latitudeSegments; lat++)
+        vertices.Add(new Vector3(-1, t, 0).normalized * radius);
+        vertices.Add(new Vector3(1, t, 0).normalized * radius);
+        vertices.Add(new Vector3(-1, -t, 0).normalized * radius);
+        vertices.Add(new Vector3(1, -t, 0).normalized * radius);
+
+        vertices.Add(new Vector3(0, -1, t).normalized * radius);
+        vertices.Add(new Vector3(0, 1, t).normalized * radius);
+        vertices.Add(new Vector3(0, -1, -t).normalized * radius);
+        vertices.Add(new Vector3(0, 1, -t).normalized * radius);
+
+        vertices.Add(new Vector3(t, 0, -1).normalized * radius);
+        vertices.Add(new Vector3(t, 0, 1).normalized * radius);
+        vertices.Add(new Vector3(-t, 0, -1).normalized * radius);
+        vertices.Add(new Vector3(-t, 0, 1).normalized * radius);
+
+        // Create the 20 base triangles
+        triangles.AddRange(new int[] { 0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11 });
+        triangles.AddRange(new int[] { 1, 5, 9, 5, 11, 4, 11, 10, 2, 10, 7, 6, 7, 1, 8 });
+        triangles.AddRange(new int[] { 3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9 });
+        triangles.AddRange(new int[] { 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7, 9, 8, 1 });
+        
+        // --- Subdivide the triangles ---
+        Dictionary<long, int> midpointCache = new Dictionary<long, int>();
+        for (int i = 0; i < subdivisions; i++)
         {
-            float a1 = Mathf.PI * lat / latitudeSegments;
-            float sin1 = Mathf.Sin(a1);
-            float cos1 = Mathf.Cos(a1);
-
-            for (int lon = 0; lon <= longitudeSegments; lon++)
+            List<int> newTriangles = new List<int>();
+            for (int j = 0; j < triangles.Count; j += 3)
             {
-                float a2 = 2 * Mathf.PI * lon / longitudeSegments;
-                float sin2 = Mathf.Sin(a2);
-                float cos2 = Mathf.Cos(a2);
+                int v1 = triangles[j];
+                int v2 = triangles[j + 1];
+                int v3 = triangles[j + 2];
 
-                float x = sin1 * cos2;
-                float y = cos1;
-                float z = sin1 * sin2;
+                int a = GetMidpointIndex(midpointCache, v1, v2, vertices);
+                int b = GetMidpointIndex(midpointCache, v2, v3, vertices);
+                int c = GetMidpointIndex(midpointCache, v3, v1, vertices);
 
-                Vector3 vertex = new Vector3(x, y, z) * radius;
-                vertices[index] = vertex;
-                normals[index] = vertex.normalized;
-                uv[index] = new Vector2((float)lon / longitudeSegments, (float)lat / latitudeSegments);
-                index++;
+                newTriangles.AddRange(new int[] { v1, a, c });
+                newTriangles.AddRange(new int[] { v2, b, a });
+                newTriangles.AddRange(new int[] { v3, c, b });
+                newTriangles.AddRange(new int[] { a, b, c });
             }
+            triangles = newTriangles;
         }
 
-        int[] triangles = new int[longitudeSegments * latitudeSegments * 6];
-        int triIndex = 0;
-
-        for (int lat = 0; lat < latitudeSegments; lat++)
-        {
-            for (int lon = 0; lon < longitudeSegments; lon++)
-            {
-                int current = lat * (longitudeSegments + 1) + lon;
-                int next = current + longitudeSegments + 1;
-
-                triangles[triIndex++] = current;
-                triangles[triIndex++] = current + 1;
-                triangles[triIndex++] = next;
-
-                triangles[triIndex++] = current + 1;
-                triangles[triIndex++] = next + 1;
-                triangles[triIndex++] = next;
-            }
-        }
-
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.normals = normals;
-        mesh.uv = uv;
-
-        //ApplyCraters(vertices, radius, craterCount: 3);
-        //mesh.vertices = vertices;
-        //mesh.RecalculateNormals();
-
-        GetComponent<MeshFilter>().sharedMesh = null;
-        GetComponent<MeshFilter>().sharedMesh = mesh;
-
-        GetComponent<MeshCollider>().sharedMesh = null;
-        GetComponent<MeshCollider>().sharedMesh = mesh;
-
-        //CrumpleAtWorldPoint(new Vector3(1, 0, 0), 0.5f, 0.5f);
-
-        //canAlter = true;
-    }
-
-    // void ApplyCraters(Vector3[] vertices, float radius, int craterCount)
-    // {
-    //     float craterRadius = radius * 0.5f;
-    //     float craterDepth = radius * 1.0f;
-
-    //     for (int i = 0; i < craterCount; i++)
-    //     {
-    //         Vector3 craterCenter = Random.onUnitSphere * radius;
-
-    //         for (int v = 0; v < vertices.Length; v++)
-    //         {
-    //             float dist = Vector3.Distance(vertices[v], craterCenter);
-
-    //             if (dist < craterRadius)
-    //             {
-    //                 float falloff = 1f - (dist / craterRadius);
-    //                 float depth = falloff * craterDepth;
-    //                 vertices[v] -= vertices[v].normalized * depth;
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    public void CrumpleAtWorldPoint(Vector3 worldImpactPoint, float radius, float depth)
-    {
-        MeshFilter mf = GetComponent<MeshFilter>();
-        Mesh mesh = mf.sharedMesh;
-        Vector3[] vertices = mesh.vertices;
-
-        // Convert world point into *local space of the mesh*
-        Vector3 localImpactPoint = transform.InverseTransformPoint(worldImpactPoint);
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            // vertices[i] is already in local space
-            float dist = Vector3.Distance(vertices[i], localImpactPoint);
-
-            if (dist < radius)
-            {
-                float falloff = 1f - (dist / radius);
-                float push = falloff * depth;
-
-                // Push vertex inward toward center of sphere (or toward impact point if desired)
-                vertices[i] -= vertices[i].normalized * push;
-            }
-        }
-
-        mesh.vertices = vertices;
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
 
-        // ALSO update the collider if using MeshCollider
-        var collider = GetComponent<MeshCollider>();
-        if (collider != null)
+        GetComponent<MeshFilter>().sharedMesh = mesh;
+        var meshCollider = GetComponent<MeshCollider>();
+        if (meshCollider != null)
         {
-            collider.sharedMesh = null;
-            collider.sharedMesh = mesh;
+            meshCollider.sharedMesh = null;
+            meshCollider.sharedMesh = mesh;
         }
     }
 
-    void Update()
+    private int GetMidpointIndex(Dictionary<long, int> cache, int i1, int i2, List<Vector3> vertices)
     {
-        if (Input.GetMouseButtonDown(0))
+        long smallerIndex = Mathf.Min(i1, i2);
+        long greaterIndex = Mathf.Max(i1, i2);
+        long key = (smallerIndex << 32) + greaterIndex;
+
+        if (cache.TryGetValue(key, out int ret))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Debug.Log("Raycast Hit Point (world): " + hit.point);
-                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red, 2f);
-
-                lastHitPoint = hit.point;  // For OnDrawGizmos
-                CrumpleAtWorldPoint(hit.point, crumpleRadius, crumpleAmount); 
-            }
-            else
-            {
-                Debug.LogWarning("Raycast did not hit anything.");
-            }
+            return ret;
         }
-    }
 
-    Vector3 lastHitPoint;
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(lastHitPoint, 0.05f);
+        Vector3 p1 = vertices[i1];
+        Vector3 p2 = vertices[i2];
+        Vector3 middle = (p1 + p2) / 2f;
+        
+        int newIndex = vertices.Count;
+        vertices.Add(middle.normalized * radius);
+        cache.Add(key, newIndex);
+        return newIndex;
     }
+}
 
 
 }

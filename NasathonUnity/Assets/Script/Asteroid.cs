@@ -141,8 +141,9 @@ public class Asteroid : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        MeshGenerator generator = other.GetComponent<MeshGenerator>();
-        generator.CrumpleAtWorldPoint(transform.position, generator.crumpleRadius, generator.crumpleAmount);
+        Debug.Log(other);
+        Earth earth = other.GetComponent<Earth>();
+        earth.CrumpleAtWorldPoint(transform.position, earth.crumpleRadius, earth.crumpleAmount);
         Destroy(this.gameObject);
     }
 }
